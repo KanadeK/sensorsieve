@@ -6,7 +6,7 @@
 - [x] Add package metadata and locked dependencies.
 - [x] RED/GREEN: validated multi-frame loading and capture-quality failures.
 - [x] RED/GREEN: persistent spot detection and transient-noise rejection.
-- [ ] RED/GREEN: deterministic reports, overlays, and `inspect` exits.
+- [x] RED/GREEN: deterministic reports, overlays, and `inspect` exits.
 - [ ] RED/GREEN: before/after matching and `compare` exits.
 - [ ] Generate deterministic dirty, cleaned, clean, and invalid example data.
 - [ ] Complete README, repair, security, contribution, and changelog docs.
