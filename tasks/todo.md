@@ -4,8 +4,8 @@
 - [x] Inspect representative public alternatives and document differentiation.
 - [x] Define objective, CLI, schema, exits, threat model, non-goals, and success criteria.
 - [x] Add package metadata and locked dependencies.
-- [ ] RED/GREEN: validated multi-frame loading and capture-quality failures.
-- [ ] RED/GREEN: persistent spot detection and transient-noise rejection.
+- [x] RED/GREEN: validated multi-frame loading and capture-quality failures.
+- [x] RED/GREEN: persistent spot detection and transient-noise rejection.
 - [ ] RED/GREEN: deterministic reports, overlays, and `inspect` exits.
 - [ ] RED/GREEN: before/after matching and `compare` exits.
 - [ ] Generate deterministic dirty, cleaned, clean, and invalid example data.

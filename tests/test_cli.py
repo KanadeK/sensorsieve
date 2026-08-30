@@ -15,4 +15,3 @@ def test_module_reports_version() -> None:
     assert result.returncode == 0
     assert result.stdout == "sensorsieve 0.1.0\n"
     assert result.stderr == ""
-

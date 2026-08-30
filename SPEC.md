@@ -44,7 +44,7 @@ SensorSieve detects persistent dark features; it does not prove that a feature i
 
 - Python `>=3.11`
 - Pillow `>=11,<13` for bounded JPEG/PNG decoding, EXIF orientation, resizing, blur, and overlays
-- NumPy `>=2,<3` for median/MAD and array arithmetic
+- NumPy `>=2,<2.4` for median/MAD and array arithmetic with Python 3.11-compatible types
 - `argparse` and standard-library CSV/JSON for the public CLI and reports
 - Hatchling for wheel/sdist builds
 
@@ -123,4 +123,3 @@ Trust boundary: image files, filenames, directories, and CLI values are untruste
 ## Open questions
 
 None blocking. The delegated request authorizes the end-to-end lifecycle; v0.1.0 deliberately keeps the format and command surface narrow.
-
