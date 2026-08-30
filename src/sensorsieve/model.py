@@ -43,3 +43,19 @@ class DetectionResult:
     spots: tuple[Spot, ...]
     median_frame: ByteImage
     residual_map: FloatImage
+
+
+@dataclass(frozen=True)
+class SpotMatch:
+    before: Spot
+    after: Spot
+    distance: float
+
+
+@dataclass(frozen=True)
+class ComparisonResult:
+    before: DetectionResult
+    after: DetectionResult
+    resolved: tuple[Spot, ...]
+    persistent: tuple[SpotMatch, ...]
+    new: tuple[Spot, ...]

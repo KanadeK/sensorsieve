@@ -7,7 +7,7 @@
 - [x] RED/GREEN: validated multi-frame loading and capture-quality failures.
 - [x] RED/GREEN: persistent spot detection and transient-noise rejection.
 - [x] RED/GREEN: deterministic reports, overlays, and `inspect` exits.
-- [ ] RED/GREEN: before/after matching and `compare` exits.
+- [x] RED/GREEN: before/after matching and `compare` exits.
 - [ ] Generate deterministic dirty, cleaned, clean, and invalid example data.
 - [ ] Complete README, repair, security, contribution, and changelog docs.
 - [ ] Add Windows/Linux CI, release workflow, release packaging, and full local gate.

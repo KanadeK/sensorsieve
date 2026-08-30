@@ -9,9 +9,16 @@ from typing import Any
 from PIL import Image, ImageDraw
 
 from sensorsieve.errors import OutputError
-from sensorsieve.model import DetectionResult, Spot
+from sensorsieve.model import ComparisonResult, DetectionResult, ImageSession, Spot
 
 _INSPECTION_FILES = ("report.json", "spots.csv", "overlay.png", "summary.txt")
+_COMPARISON_FILES = (
+    "report.json",
+    "changes.csv",
+    "before-overlay.png",
+    "after-overlay.png",
+    "summary.txt",
+)
 _SPOT_FIELDS = (
     "spot_id",
     "image_x",
@@ -60,23 +67,26 @@ def _spot_dict(spot: Spot) -> dict[str, int | float]:
     }
 
 
+def _source_dict(session: ImageSession) -> dict[str, Any]:
+    return {
+        "file_count": len(session.filenames),
+        "original_size": {
+            "width": session.original_width,
+            "height": session.original_height,
+        },
+        "analysis_size": {
+            "width": session.analysis_width,
+            "height": session.analysis_height,
+        },
+    }
+
+
 def inspection_payload(result: DetectionResult) -> dict[str, Any]:
-    session = result.session
     return {
         "schema_version": 1,
         "kind": "inspection",
         "status": "review" if result.spots else "clean",
-        "source": {
-            "file_count": len(session.filenames),
-            "original_size": {
-                "width": session.original_width,
-                "height": session.original_height,
-            },
-            "analysis_size": {
-                "width": session.analysis_width,
-                "height": session.analysis_height,
-            },
-        },
+        "source": _source_dict(result.session),
         "method": {
             "threshold": result.threshold,
             "minimum_frame_persistence": round(2 / 3, 6),
@@ -84,6 +94,32 @@ def inspection_payload(result: DetectionResult) -> dict[str, Any]:
         "spots": [_spot_dict(spot) for spot in result.spots],
         "limitations": [
             "Persistent dark features are candidates, not proof of sensor dust.",
+            "Mirrored sensor guidance may depend on camera orientation.",
+            "SensorSieve does not recommend or perform cleaning.",
+        ],
+    }
+
+
+def comparison_payload(result: ComparisonResult) -> dict[str, Any]:
+    return {
+        "schema_version": 1,
+        "kind": "comparison",
+        "status": "review" if result.persistent or result.new else "clean",
+        "before": _source_dict(result.before.session),
+        "after": _source_dict(result.after.session),
+        "method": {"maximum_match_distance": 0.025},
+        "resolved": [_spot_dict(spot) for spot in result.resolved],
+        "persistent": [
+            {
+                "before": _spot_dict(match.before),
+                "after": _spot_dict(match.after),
+                "distance": match.distance,
+            }
+            for match in result.persistent
+        ],
+        "new": [_spot_dict(spot) for spot in result.new],
+        "limitations": [
+            "Position matching does not prove that two features have the same physical cause.",
             "Mirrored sensor guidance may depend on camera orientation.",
             "SensorSieve does not recommend or perform cleaning.",
         ],
@@ -132,6 +168,90 @@ def _summary(result: DetectionResult) -> str:
     )
 
 
+def _comparison_csv(result: ComparisonResult) -> str:
+    fields = (
+        "classification",
+        "before_spot_id",
+        "after_spot_id",
+        "distance",
+        "image_x",
+        "image_y",
+        "sensor_x",
+        "sensor_y",
+    )
+    rows: list[dict[str, str | int | float]] = []
+    for spot in result.resolved:
+        rows.append(
+            {
+                "classification": "resolved",
+                "before_spot_id": spot.spot_id,
+                "after_spot_id": "",
+                "distance": "",
+                "image_x": spot.image_x,
+                "image_y": spot.image_y,
+                "sensor_x": spot.sensor_x,
+                "sensor_y": spot.sensor_y,
+            }
+        )
+    for match in result.persistent:
+        rows.append(
+            {
+                "classification": "persistent",
+                "before_spot_id": match.before.spot_id,
+                "after_spot_id": match.after.spot_id,
+                "distance": match.distance,
+                "image_x": match.after.image_x,
+                "image_y": match.after.image_y,
+                "sensor_x": match.after.sensor_x,
+                "sensor_y": match.after.sensor_y,
+            }
+        )
+    for spot in result.new:
+        rows.append(
+            {
+                "classification": "new",
+                "before_spot_id": "",
+                "after_spot_id": spot.spot_id,
+                "distance": "",
+                "image_x": spot.image_x,
+                "image_y": spot.image_y,
+                "sensor_x": spot.sensor_x,
+                "sensor_y": spot.sensor_y,
+            }
+        )
+    stream = io.StringIO(newline="")
+    writer = csv.DictWriter(stream, fieldnames=fields, lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    return stream.getvalue()
+
+
+def _comparison_summary(result: ComparisonResult) -> str:
+    status = "REVIEW" if result.persistent or result.new else "CLEAN"
+    return (
+        "SensorSieve comparison\n"
+        f"Status: {status}\n"
+        f"Resolved spots: {len(result.resolved)}\n"
+        f"Persistent spots: {len(result.persistent)}\n"
+        f"New spots: {len(result.new)}\n"
+        f"Exit code: {1 if result.persistent or result.new else 0}\n"
+    )
+
+
+def _write_artifacts(
+    output_dir: Path,
+    filenames: tuple[str, ...],
+    payloads: dict[str, bytes],
+    label: str,
+) -> None:
+    try:
+        output_dir.mkdir(exist_ok=True)
+        for filename in filenames:
+            (output_dir / filename).write_bytes(payloads[filename])
+    except OSError as error:
+        raise OutputError(f"cannot write {label} artifacts: {error.strerror or error}") from error
+
+
 def write_inspection(result: DetectionResult, output_dir: Path) -> None:
     """Write the complete inspection artifact set into an available directory."""
     payloads = {
@@ -142,11 +262,18 @@ def write_inspection(result: DetectionResult, output_dir: Path) -> None:
         "overlay.png": _overlay_bytes(result),
         "summary.txt": _summary(result).encode(),
     }
-    try:
-        output_dir.mkdir(exist_ok=True)
-        for filename in _INSPECTION_FILES:
-            (output_dir / filename).write_bytes(payloads[filename])
-    except OSError as error:
-        raise OutputError(
-            f"cannot write inspection artifacts: {error.strerror or error}"
-        ) from error
+    _write_artifacts(output_dir, _INSPECTION_FILES, payloads, "inspection")
+
+
+def write_comparison(result: ComparisonResult, output_dir: Path) -> None:
+    """Write the complete before/after comparison artifact set."""
+    payloads = {
+        "report.json": (
+            json.dumps(comparison_payload(result), indent=2, sort_keys=True) + "\n"
+        ).encode(),
+        "changes.csv": _comparison_csv(result).encode(),
+        "before-overlay.png": _overlay_bytes(result.before),
+        "after-overlay.png": _overlay_bytes(result.after),
+        "summary.txt": _comparison_summary(result).encode(),
+    }
+    _write_artifacts(output_dir, _COMPARISON_FILES, payloads, "comparison")
