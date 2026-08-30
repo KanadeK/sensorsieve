@@ -42,6 +42,20 @@ def _checksums(assets: tuple[Path, ...]) -> Path:
     return output
 
 
+def _require_annotated_tag(tag: str) -> None:
+    result = subprocess.run(
+        ["git", "-c", f"safe.directory={ROOT.as_posix()}", "cat-file", "-t", tag],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise SystemExit(f"tag does not exist: {tag}")
+    if result.stdout.strip() != "tag":
+        raise SystemExit(f"release tag must be annotated: {tag}")
+
+
 def main() -> None:
     if len(sys.argv) != 2:
         raise SystemExit("usage: package_release.py vVERSION")
@@ -49,6 +63,7 @@ def main() -> None:
     tag = sys.argv[1]
     if tag != f"v{version}":
         raise SystemExit(f"tag {tag} does not match project version {version}")
+    _require_annotated_tag(tag)
 
     wheel = DIST / f"sensorsieve-{version}-py3-none-any.whl"
     source_distribution = DIST / f"sensorsieve-{version}.tar.gz"

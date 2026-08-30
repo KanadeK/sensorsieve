@@ -21,8 +21,13 @@ def _candidate_files(input_dir: Path) -> tuple[Path, ...]:
     if not input_dir.is_dir() or input_dir.is_symlink():
         raise InputError("input must be a real directory")
 
+    try:
+        entries = tuple(input_dir.iterdir())
+    except OSError as error:
+        raise InputError("cannot read input directory") from error
+
     candidates: list[Path] = []
-    for entry in input_dir.iterdir():
+    for entry in entries:
         if entry.suffix.lower() not in _EXTENSIONS:
             continue
         if entry.is_symlink():
@@ -39,7 +44,11 @@ def _candidate_files(input_dir: Path) -> tuple[Path, ...]:
 
 
 def _decode_grayscale(path: Path, max_side: int) -> tuple[FloatImage, tuple[int, int]]:
-    if path.stat().st_size > _MAX_FILE_BYTES:
+    try:
+        file_size = path.stat().st_size
+    except OSError as error:
+        raise InputError(f"cannot read image file: {path.name}") from error
+    if file_size > _MAX_FILE_BYTES:
         raise InputError(f"image exceeds the 100 MiB limit: {path.name}")
 
     try:
@@ -97,16 +106,15 @@ def load_session(input_dir: Path, *, max_side: int = 2048) -> ImageSession:
         if original_size is None:
             original_size = current_original
             analysis_size = current_analysis
+            projected_pixels = analysis_size[0] * analysis_size[1] * len(paths)
+            if projected_pixels > _MAX_ANALYSIS_PIXELS:
+                raise InputError("analysis would exceed the 96 million pixel session limit")
         elif current_original != original_size or current_analysis != analysis_size:
             raise InputError("all images in a session must have matching dimensions")
         _validate_capture(pixels, path.name)
         decoded.append(pixels)
 
     assert original_size is not None and analysis_size is not None
-    total_analysis_pixels = analysis_size[0] * analysis_size[1] * len(decoded)
-    if total_analysis_pixels > _MAX_ANALYSIS_PIXELS:
-        raise InputError("analysis would exceed the 96 million pixel session limit")
-
     return ImageSession(
         filenames=tuple(path.name for path in paths),
         original_width=original_size[0],

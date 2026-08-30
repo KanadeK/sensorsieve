@@ -76,7 +76,7 @@ def _spot_from_component(
     center_y = float(np.sum(ys * weights) / total_weight)
     sample_x = min(width - 1, max(0, round(center_x)))
     sample_y = min(height - 1, max(0, round(center_y)))
-    persistence = float(np.mean(frame_residuals[:, sample_y, sample_x] >= threshold * 0.75))
+    persistence = float(np.mean(frame_residuals[:, sample_y, sample_x] >= threshold))
     if persistence < _MIN_PERSISTENCE:
         return None
 

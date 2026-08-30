@@ -38,15 +38,18 @@ _SPOT_FIELDS = (
 
 def assert_output_available(output_dir: Path) -> None:
     """Validate an output boundary without creating or deleting anything."""
-    if output_dir.is_symlink():
-        raise OutputError("output directory cannot be a symbolic link")
-    if output_dir.exists():
-        if not output_dir.is_dir():
-            raise OutputError("output path must be a directory")
-        if any(output_dir.iterdir()):
-            raise OutputError("output directory must be empty")
-    elif not output_dir.parent.is_dir():
-        raise OutputError("output parent directory must already exist")
+    try:
+        if output_dir.is_symlink():
+            raise OutputError("output directory cannot be a symbolic link")
+        if output_dir.exists():
+            if not output_dir.is_dir():
+                raise OutputError("output path must be a directory")
+            if any(output_dir.iterdir()):
+                raise OutputError("output directory must be empty")
+        elif not output_dir.parent.is_dir():
+            raise OutputError("output parent directory must already exist")
+    except OSError as error:
+        raise OutputError("cannot inspect output directory") from error
 
 
 def _spot_dict(spot: Spot) -> dict[str, int | float]:

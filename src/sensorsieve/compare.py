@@ -21,9 +21,15 @@ def compare_results(
     candidates: list[tuple[float, int, int, Spot, Spot]] = []
     for before_spot in before.spots:
         for after_spot in after.spots:
-            distance = hypot(
-                before_spot.image_x - after_spot.image_x,
-                before_spot.image_y - after_spot.image_y,
+            width = max(1, before.session.original_width - 1)
+            height = max(1, before.session.original_height - 1)
+            diagonal = hypot(width, height)
+            distance = (
+                hypot(
+                    (before_spot.image_x - after_spot.image_x) * width,
+                    (before_spot.image_y - after_spot.image_y) * height,
+                )
+                / diagonal
             )
             if distance <= maximum_distance:
                 candidates.append(

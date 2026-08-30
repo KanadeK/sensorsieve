@@ -54,6 +54,17 @@ def test_compare_rejects_different_capture_dimensions(tmp_path: Path) -> None:
         compare_results(before, after)
 
 
+def test_compare_match_radius_is_fraction_of_image_diagonal(tmp_path: Path) -> None:
+    before = _analysis(tmp_path / "before", (80.0, 60.0, 5.0, 72.0))
+    after = _analysis(tmp_path / "after", (84.0, 60.0, 5.0, 72.0))
+
+    comparison = compare_results(before, after)
+
+    assert len(comparison.persistent) == 1
+    assert comparison.resolved == ()
+    assert comparison.new == ()
+
+
 def test_compare_cli_writes_artifacts_and_returns_one(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

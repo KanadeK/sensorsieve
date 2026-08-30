@@ -6,9 +6,11 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from sensorsieve.detect import analyze_session
+import sensorsieve.images as image_module
+from sensorsieve.detect import _spot_from_component, analyze_session
 from sensorsieve.errors import CaptureQualityError, InputError
 from sensorsieve.images import load_session
+from sensorsieve.model import FloatImage
 from tests.helpers import three_frames, write_flat_session
 
 
@@ -144,3 +146,45 @@ def test_detection_rejects_texture_dominated_field(tmp_path: Path) -> None:
 
     with pytest.raises(CaptureQualityError, match="residual mask covers"):
         analyze_session(load_session(session_dir))
+
+
+def test_component_persistence_uses_full_detection_threshold() -> None:
+    component = [(1, 1), (1, 2), (2, 1), (2, 2), (2, 3), (3, 2)]
+    median_residual = np.zeros((5, 5), dtype=np.float32)
+    frame_residuals = np.zeros((4, 5, 5), dtype=np.float32)
+    for y, x in component:
+        median_residual[y, x] = 0.0125
+        frame_residuals[:, y, x] = (0.015, 0.015, 0.010, 0.010)
+
+    spot = _spot_from_component(
+        component,
+        median_residual,
+        frame_residuals,
+        threshold=0.012,
+        width=5,
+        height=5,
+    )
+
+    assert spot is None
+
+
+def test_session_pixel_limit_stops_after_first_decoded_frame(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    session_dir = tmp_path / "large-session"
+    session_dir.mkdir()
+    for index in range(32):
+        (session_dir / f"flat-{index:02}.png").write_bytes(b"preflight only")
+    calls: list[str] = []
+
+    def fake_decode(path: Path, max_side: int) -> tuple[FloatImage, tuple[int, int]]:
+        calls.append(path.name)
+        return np.full((1000, 1000), 0.5, dtype=np.float32), (1000, 1000)
+
+    monkeypatch.setattr(image_module, "_MAX_ANALYSIS_PIXELS", 5_000_000)
+    monkeypatch.setattr(image_module, "_decode_grayscale", fake_decode)
+
+    with pytest.raises(InputError, match="session limit"):
+        load_session(session_dir)
+
+    assert calls == ["flat-00.png"]

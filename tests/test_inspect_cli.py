@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -113,3 +114,26 @@ def test_inspect_requires_existing_output_parent(
     assert main(["inspect", str(session_dir), "--output", str(output_dir)]) == 2
     assert not output_dir.exists()
     assert "output parent directory must already exist" in capsys.readouterr().err
+
+
+def test_inspect_converts_directory_permission_error_to_exit_two(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    session_dir = write_flat_session(tmp_path / "session", frame_spots=three_frames())
+    original_iterdir = Path.iterdir
+
+    def denied_iterdir(path: Path) -> Iterator[Path]:
+        if path == session_dir:
+            raise PermissionError("denied for test")
+        return original_iterdir(path)
+
+    monkeypatch.setattr(Path, "iterdir", denied_iterdir)
+
+    exit_code = main(["inspect", str(session_dir), "--output", str(tmp_path / "output")])
+
+    assert exit_code == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == "sensorsieve: error: cannot read input directory\n"
