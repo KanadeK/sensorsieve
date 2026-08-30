@@ -3,7 +3,7 @@
 - [x] Inventory local and remembered projects.
 - [x] Inspect representative public alternatives and document differentiation.
 - [x] Define objective, CLI, schema, exits, threat model, non-goals, and success criteria.
-- [ ] Add package metadata and locked dependencies.
+- [x] Add package metadata and locked dependencies.
 - [ ] RED/GREEN: validated multi-frame loading and capture-quality failures.
 - [ ] RED/GREEN: persistent spot detection and transient-noise rejection.
 - [ ] RED/GREEN: deterministic reports, overlays, and `inspect` exits.
@@ -20,4 +20,3 @@
 - [ ] Download public artifacts and run a fresh-environment functional smoke test.
 - [ ] Verify repository visibility, topics, security settings, and sole contributor `KanadeK`.
 - [ ] Send and verify the Gmail completion notice.
-
