@@ -1,0 +1,8 @@
+SensorSieve inspection
+Status: REVIEW
+Frames: 3
+Original size: 320x240
+Analysis size: 320x240
+Threshold: 0.012000
+Persistent spots: 2
+Exit code: 1

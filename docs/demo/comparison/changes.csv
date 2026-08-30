@@ -1,0 +1,4 @@
+classification,before_spot_id,after_spot_id,distance,image_x,image_y,sensor_x,sensor_y
+resolved,1,,,0.269592,0.334624,0.730408,0.665376
+persistent,2,2,0.006287,0.727241,0.686139,0.272759,0.313861
+new,,1,,0.846365,0.242672,0.153635,0.757328

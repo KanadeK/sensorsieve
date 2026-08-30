@@ -1,0 +1,6 @@
+SensorSieve comparison
+Status: REVIEW
+Resolved spots: 1
+Persistent spots: 1
+New spots: 1
+Exit code: 1

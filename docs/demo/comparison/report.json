@@ -1,0 +1,104 @@
+{
+  "after": {
+    "analysis_size": {
+      "height": 240,
+      "width": 320
+    },
+    "file_count": 3,
+    "original_size": {
+      "height": 240,
+      "width": 320
+    }
+  },
+  "before": {
+    "analysis_size": {
+      "height": 240,
+      "width": 320
+    },
+    "file_count": 3,
+    "original_size": {
+      "height": 240,
+      "width": 320
+    }
+  },
+  "kind": "comparison",
+  "limitations": [
+    "Position matching does not prove that two features have the same physical cause.",
+    "Mirrored sensor guidance may depend on camera orientation.",
+    "SensorSieve does not recommend or perform cleaning."
+  ],
+  "method": {
+    "maximum_match_distance": 0.025
+  },
+  "new": [
+    {
+      "area_pixels": 439,
+      "bbox_bottom": 0.288703,
+      "bbox_left": 0.808777,
+      "bbox_right": 0.880878,
+      "bbox_top": 0.196653,
+      "image_x": 0.846365,
+      "image_y": 0.242672,
+      "mean_contrast": 0.109464,
+      "peak_contrast": 0.275676,
+      "persistence": 1.0,
+      "sensor_x": 0.153635,
+      "sensor_y": 0.757328,
+      "spot_id": 1
+    }
+  ],
+  "persistent": [
+    {
+      "after": {
+        "area_pixels": 534,
+        "bbox_bottom": 0.740586,
+        "bbox_left": 0.68652,
+        "bbox_right": 0.768025,
+        "bbox_top": 0.631799,
+        "image_x": 0.727241,
+        "image_y": 0.686139,
+        "mean_contrast": 0.098097,
+        "peak_contrast": 0.248649,
+        "persistence": 1.0,
+        "sensor_x": 0.272759,
+        "sensor_y": 0.313861,
+        "spot_id": 2
+      },
+      "before": {
+        "area_pixels": 529,
+        "bbox_bottom": 0.736402,
+        "bbox_left": 0.680251,
+        "bbox_right": 0.761755,
+        "bbox_top": 0.631799,
+        "image_x": 0.720954,
+        "image_y": 0.686103,
+        "mean_contrast": 0.098773,
+        "peak_contrast": 0.244565,
+        "persistence": 1.0,
+        "sensor_x": 0.279046,
+        "sensor_y": 0.313897,
+        "spot_id": 2
+      },
+      "distance": 0.006287
+    }
+  ],
+  "resolved": [
+    {
+      "area_pixels": 533,
+      "bbox_bottom": 0.389121,
+      "bbox_left": 0.22884,
+      "bbox_right": 0.310345,
+      "bbox_top": 0.280335,
+      "image_x": 0.269592,
+      "image_y": 0.334624,
+      "mean_contrast": 0.114008,
+      "peak_contrast": 0.281437,
+      "persistence": 1.0,
+      "sensor_x": 0.730408,
+      "sensor_y": 0.665376,
+      "spot_id": 1
+    }
+  ],
+  "schema_version": 1,
+  "status": "review"
+}

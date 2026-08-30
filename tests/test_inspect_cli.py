@@ -92,3 +92,24 @@ def test_inspect_refuses_nonempty_output_directory(
     assert sentinel.read_text(encoding="utf-8") == "owner data"
     captured = capsys.readouterr()
     assert captured.err == "sensorsieve: error: output directory must be empty\n"
+
+
+def test_inspect_refuses_output_file(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    session_dir = write_flat_session(tmp_path / "clean", frame_spots=three_frames())
+    output_file = tmp_path / "report.txt"
+    output_file.write_text("owner data", encoding="utf-8")
+
+    assert main(["inspect", str(session_dir), "--output", str(output_file)]) == 2
+    assert output_file.read_text(encoding="utf-8") == "owner data"
+    assert "output path must be a directory" in capsys.readouterr().err
+
+
+def test_inspect_requires_existing_output_parent(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    session_dir = write_flat_session(tmp_path / "clean", frame_spots=three_frames())
+    output_dir = tmp_path / "missing-parent" / "report"
+
+    assert main(["inspect", str(session_dir), "--output", str(output_dir)]) == 2
+    assert not output_dir.exists()
+    assert "output parent directory must already exist" in capsys.readouterr().err
