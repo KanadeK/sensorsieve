@@ -1,0 +1,23 @@
+# SensorSieve v0.1.0 checklist
+
+- [x] Inventory local and remembered projects.
+- [x] Inspect representative public alternatives and document differentiation.
+- [x] Define objective, CLI, schema, exits, threat model, non-goals, and success criteria.
+- [ ] Add package metadata and locked dependencies.
+- [ ] RED/GREEN: validated multi-frame loading and capture-quality failures.
+- [ ] RED/GREEN: persistent spot detection and transient-noise rejection.
+- [ ] RED/GREEN: deterministic reports, overlays, and `inspect` exits.
+- [ ] RED/GREEN: before/after matching and `compare` exits.
+- [ ] Generate deterministic dirty, cleaned, clean, and invalid example data.
+- [ ] Complete README, repair, security, contribution, and changelog docs.
+- [ ] Add Windows/Linux CI, release workflow, release packaging, and full local gate.
+- [ ] Pass Ruff, format, strict mypy, >=90% branch coverage, build, audit, examples, and wheel smoke.
+- [ ] Perform independent five-axis review and resolve all required findings.
+- [ ] Commit with verified author/committer and no secret-like content or co-author trailers.
+- [ ] Create public GitHub repository and push `main`.
+- [ ] Verify cross-platform CI at the exact release commit.
+- [ ] Create annotated `v0.1.0` and verify non-draft Release assets/checksums.
+- [ ] Download public artifacts and run a fresh-environment functional smoke test.
+- [ ] Verify repository visibility, topics, security settings, and sole contributor `KanadeK`.
+- [ ] Send and verify the Gmail completion notice.
+
