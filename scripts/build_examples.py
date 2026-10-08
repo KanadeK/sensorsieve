@@ -34,7 +34,7 @@ def _write_session(name: str, frames: tuple[tuple[SpotSpec, ...], ...]) -> None:
         # Remove sub-pixel libm/SIMD differences before truncating to 8-bit samples.
         pixels = np.floor(np.round(np.clip(pixels, 0, 255), decimals=6))
         image = Image.fromarray(pixels.astype(np.uint8), mode="L")
-        image.save(output / f"flat-{index + 1}.png", compress_level=9, optimize=False)
+        image.save(output / f"flat-{index + 1}.png", compress_level=0, optimize=False)
 
 
 def main() -> None:

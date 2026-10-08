@@ -152,7 +152,7 @@ def _overlay_bytes(result: DetectionResult) -> bytes:
         draw.line((center_x - 4, center_y, center_x + 4, center_y), fill=(255, 220, 0))
         draw.line((center_x, center_y - 4, center_x, center_y + 4), fill=(255, 220, 0))
     stream = io.BytesIO()
-    image.save(stream, format="PNG", optimize=False)
+    image.save(stream, format="PNG", compress_level=0, optimize=False)
     return stream.getvalue()
 
 

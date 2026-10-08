@@ -27,3 +27,7 @@ Reports contain no clock, host, absolute path, EXIF, or random value. Files, com
 Synthetic fixture luminance is quantized to six decimal places before conversion
 to 8-bit pixels so CPU and operating-system transcendental rounding cannot change
 the generated images.
+
+Fixture and overlay PNGs use uncompressed storage so different platform zlib
+implementations produce the same bytes. This increases individual PNG sizes;
+release ZIP archives still compress their contents.
