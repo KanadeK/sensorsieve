@@ -13,10 +13,10 @@
 - [x] Add Windows/Linux CI, release workflow, release packaging, and full local gate.
 - [x] Pass Ruff, format, strict mypy, >=90% branch coverage, build, audit, examples, and wheel smoke.
 - [x] Perform independent five-axis review and resolve all required findings.
-- [ ] Commit with verified author/committer and no secret-like content or co-author trailers.
-- [ ] Create public GitHub repository and push `main`.
-- [ ] Verify cross-platform CI at the exact release commit.
-- [ ] Create annotated `v0.1.0` and verify non-draft Release assets/checksums.
-- [ ] Download public artifacts and run a fresh-environment functional smoke test.
-- [ ] Verify repository visibility, topics, security settings, and sole contributor `KanadeK`.
-- [ ] Send and verify the Gmail completion notice.
+- [x] Commit with verified author/committer and no secret-like content or co-author trailers.
+- [x] Create public GitHub repository and push `main`.
+- [x] Verify cross-platform CI at the exact release commit.
+- [x] Create annotated `v0.1.0` and verify non-draft Release assets/checksums.
+- [x] Download public artifacts and run a fresh-environment functional smoke test.
+- [x] Verify repository visibility, topics, security settings, and sole contributor `KanadeK`.
+- [x] Send and verify the Gmail completion notice.

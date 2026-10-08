@@ -104,9 +104,8 @@ uv --cache-dir .uv-cache run --extra dev pytest tests/test_detection.py
 pwsh -NoProfile -File scripts/check.ps1
 ```
 
-The full gate runs Ruff, format, strict mypy, branch coverage, wheel/sdist builds, dependency audit, deterministic example regeneration, all three exit paths, committed-demo comparison, and installed-wheel smoke tests. See [repair guidance](docs/REPAIR.md), [contribution rules](CONTRIBUTING.md), [security policy](SECURITY.md), and the exact [v0.1.0 spec](SPEC.md).
+The full gate runs Ruff, format, strict mypy, branch coverage, wheel/sdist builds, dependency audit, deterministic example regeneration, all three exit paths, committed-demo comparison, and installed-wheel smoke tests. See [release verification](docs/RELEASE-VERIFICATION.md), [repair guidance](docs/REPAIR.md), [contribution rules](CONTRIBUTING.md), [security policy](SECURITY.md), and the exact [v0.1.0 spec](SPEC.md).
 
 ## License
 
 MIT
-
