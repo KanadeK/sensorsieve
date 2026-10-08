@@ -29,6 +29,24 @@ jobs:
       - name: Run release-equivalent gate
         shell: pwsh
         run: ./scripts/check.ps1
+      - name: Explain fixture drift
+        if: failure() && matrix.os == 'ubuntu-latest' && matrix.python == '3.14'
+        shell: pwsh
+        run: |
+          @'
+          import io
+          import json
+          import subprocess
+          from pathlib import Path
+          import numpy as np
+          from PIL import Image, features
+          print(json.dumps({"zlib": features.version("zlib"), "zlib_ng": features.version("zlib_ng")}))
+          for path in sorted(Path("examples").rglob("*.png")):
+              original = subprocess.check_output(["git", "show", f"HEAD:{path.as_posix()}"])
+              expected = np.asarray(Image.open(io.BytesIO(original)))
+              actual = np.asarray(Image.open(path))
+              print(json.dumps({"file": path.as_posix(), "encoded_equal": original == path.read_bytes(), "different_pixels": int(np.count_nonzero(expected != actual))}))
+          '@ | uv run python -
       - name: Upload built distributions
         if: matrix.os == 'ubuntu-latest' && matrix.python == '3.14'
         uses: actions/upload-artifact@v4
@@ -36,4 +54,3 @@ jobs:
           name: sensorsieve-distributions
           path: dist/
           if-no-files-found: error
-
