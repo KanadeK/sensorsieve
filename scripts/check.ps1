@@ -50,7 +50,7 @@ try {
     if (Test-Path -LiteralPath (Join-Path $repo 'dist')) {
         Remove-Item -LiteralPath (Join-Path $repo 'dist') -Recurse -Force
     }
-    & uv build
+    & uv --cache-dir (Join-Path $temporary 'build-cache') build
     Assert-ExitCode 0 'package build'
 
     & uv run pip-audit --cache-dir (Join-Path $temporary 'audit-cache')
