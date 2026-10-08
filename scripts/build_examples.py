@@ -31,7 +31,9 @@ def _write_session(name: str, frames: tuple[tuple[SpotSpec, ...], ...]) -> None:
             distance = (x - center_x) ** 2 + (y - center_y) ** 2
             pixels -= strength * np.exp(-distance / (2.0 * radius**2))
         pixels += ((x + 2 * y + index) % 3) - 1
-        image = Image.fromarray(np.clip(pixels, 0, 255).astype(np.uint8), mode="L")
+        # Remove sub-pixel libm/SIMD differences before truncating to 8-bit samples.
+        pixels = np.floor(np.round(np.clip(pixels, 0, 255), decimals=6))
+        image = Image.fromarray(pixels.astype(np.uint8), mode="L")
         image.save(output / f"flat-{index + 1}.png", compress_level=9, optimize=False)
 
 

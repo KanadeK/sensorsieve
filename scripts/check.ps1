@@ -4,7 +4,9 @@ $PSNativeCommandUseErrorActionPreference = $false
 
 $repo = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $temporary = Join-Path ([System.IO.Path]::GetTempPath()) ("sensorsieve-check-" + [guid]::NewGuid().ToString('N'))
-$env:UV_CACHE_DIR = Join-Path $repo '.uv-cache'
+if (-not $env:UV_CACHE_DIR) {
+    $env:UV_CACHE_DIR = Join-Path $repo '.uv-cache'
+}
 
 function Assert-ExitCode([int]$Expected, [string]$Label) {
     if ($LASTEXITCODE -ne $Expected) {

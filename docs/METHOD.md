@@ -24,3 +24,6 @@ This is positional evidence, not physical identity proof. A broad blemish can mo
 
 Reports contain no clock, host, absolute path, EXIF, or random value. Files, components, and matches use explicit stable ordering; numeric values are rounded to six decimal places. The release gate regenerates examples and compares CLI output with committed demo artifacts.
 
+Synthetic fixture luminance is quantized to six decimal places before conversion
+to 8-bit pixels so CPU and operating-system transcendental rounding cannot change
+the generated images.
